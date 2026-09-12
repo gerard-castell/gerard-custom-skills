@@ -37,7 +37,36 @@ Take the ones you like. Ignore the rest.
 
 ## 🚀 Use it
 
-Clone the repo, copy the folder you want, install its dependencies, run its scripts. That's it:
+The fastest way in is to hand a skill to an agent and describe what you want. It reads the
+`SKILL.md`, runs the scripts, looks at what came out and goes round again — which is most of the
+work, since rigging a character is two or three rounds of *"that shoulder pivot is wrong, move it
+left"*.
+
+**With Claude Code**
+
+```
+/plugin marketplace add gerard-castell/gerard-custom-skills
+/plugin install png-to-animated-svg@gerard-custom-skills
+```
+
+Then just ask for the thing: *"turn this PNG into a loading screen"*.
+
+**With any other agent**
+
+Clone the repo and point the agent at the skill's folder and its `SKILL.md`. That is the whole
+entry point — no runtime, no adapter. Some agents have their own convention for picking this up
+(an `AGENTS.md`, for example); see [AGENTS.md](AGENTS.md).
+
+```bash
+git clone https://github.com/gerard-castell/gerard-custom-skills.git
+```
+
+<details>
+<summary>Or run it yourself, no agent involved</summary>
+
+A skill is a folder of scripts and docs, and its `SKILL.md` reads as plain documentation — the
+pipeline, the setup, the commands, with any agent-specific wiring in its own section at the
+bottom. Copy the folder, install its dependencies, run its scripts:
 
 ```bash
 git clone https://github.com/gerard-castell/gerard-custom-skills.git
@@ -47,28 +76,12 @@ python3 -m venv .venv && .venv/bin/pip install vtracer pillow
 .venv/bin/python scripts/grid.py character.png -o grid.png
 ```
 
-Each skill's `SKILL.md` reads as plain documentation — the pipeline, the setup, the commands — with
-any agent-specific wiring in its own section at the bottom.
+You get the same output either way. The agent just saves you the iteration loop.
+
+</details>
 
 <details>
-<summary>Other ways in</summary>
-
-**With an agent**
-
-Any agent that can read a folder of docs and run shell commands can follow a skill the same way a
-human would — point it at the skill's folder and its `SKILL.md`. Some runtimes have their own
-convention for this (an `AGENTS.md` entry point, for example); see [AGENTS.md](AGENTS.md).
-
-**With Claude Code**
-
-Claude Code discovers skills through a plugin marketplace:
-
-```
-/plugin marketplace add gerard-castell/gerard-custom-skills
-/plugin install png-to-animated-svg@gerard-custom-skills
-```
-
-**Dropped in by hand**
+<summary>Dropped in by hand</summary>
 
 For every project you touch:
 
