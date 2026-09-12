@@ -19,66 +19,62 @@
 
 That is the same drawing on both sides. Nothing was redrawn, and there is no sprite sheet: the PNG
 was cut into named pieces, each piece was vectorized from its own cut-out, and the result is an SVG
-whose head, eyes, arms and chest light each carry their own transform. It stays sharp at any size,
-and it took about fifteen minutes.
+whose head, eyes, arms and chest light each carry their own transform. It stays sharp at any size.
 
-## 🎬 How that happened
+Nobody measured anything by hand to get there. The agent did.
+
+## ⚡ Use it
+
+Install the skill, then hand it a PNG:
 
 ```
-robot.png  --grid.py-->    grid.png      read the pieces off a labelled coordinate grid
-           --rig.json-->                 you name the pieces: region, pivot, what's a child of what
-           --rig.py-->     rigged.svg    each piece traced from its own cut-out, named group
-           --preview.py--> preview.html  tint the pieces, drag a slider, catch bad cuts early
-           + GSAP          the animation (assets/loader.html is a working starting point)
+/plugin marketplace add gerard-castell/gerard-custom-skills
+/plugin install png-to-animated-svg@gerard-custom-skills
 ```
 
-The robot above is nine pieces: body, head, two arms, two eyes, two antenna bulbs, chest light.
-Its rig is checked in as [`assets/demo/robot.rig.json`](assets/demo/robot.rig.json) if you want to
-see what a finished one looks like — regions as polygons traced along the shoulder balls, eyes as
-ellipses with a socket colour painted underneath so a blink reveals an eyelid rather than a hole.
+> *"Animate robot.png as a loading screen."*
+
+That is the whole interface. From there the agent looks at your image, decides what should move,
+cuts and traces the pieces, checks its own work in a browser and fixes what came out wrong — the
+robot above took about fifteen minutes of that, start to finish.
+
+**What it will ask you.** Which pieces should move, once, before it builds anything. Then it shows
+you a preview each round and you say what looks wrong — *the arm swings out of its socket*, *the
+head is drifting off the neck*. Two or three rounds is normal, and knowing why a seam opened is
+its job, not yours.
+
+**What you get back.** `rigged.svg` — the artwork as named, movable groups — and a working loading
+screen around it: idle loop, real progress, reveal.
+
+Any agent that can read a folder and run shell commands works the same way; point it at this folder
+and [`SKILL.md`](SKILL.md).
+
+## 🎬 What it is doing while you wait
+
+```
+robot.png  →  a labelled coordinate grid, to measure the pieces off
+           →  rig.json: each piece named — its region, its pivot, what it is a child of
+           →  rigged.svg: every piece traced from its own cut-out, as its own group
+           →  a browser preview: tint the pieces, swing each one, catch bad cuts early
+           →  GSAP: the idle loop, the progress, the reveal
+```
+
+The robot is nine pieces: body, head, two arms, two eyes, two antenna bulbs, chest light. Its rig
+is checked in as [`assets/demo/robot.rig.json`](assets/demo/robot.rig.json) — regions drawn as
+polygons along the shoulder balls, eyes as ellipses with a socket colour painted underneath so a
+blink shows an eyelid rather than a hole.
+
+One thing it cannot do for you: the PNG needs a transparent background. Tracing a solid one makes a
+single giant shape that swallows the character.
 
 ## 🧩 What's in the box
 
 | | |
 |---|---|
-| `scripts/grid.py` | The PNG with labelled coordinates, cropped exactly as the tracer crops it. This is how you measure. |
-| `scripts/rig.py` | PNG + `rig.json` → `rigged.svg`. Rect or polygon regions, nested parts, pivots, seam patches, bleed. |
-| `scripts/preview.py` | Tint each part, rotate each part around its pivot with a slider. Use it before writing any animation. |
-| `scripts/trace.py` | The vectorizer — VTracer at 3× supersampling, alpha cleanup, auto-crop. |
-| `assets/loader.html` | A working loading screen: idle loop, real-progress API, reveal. |
-| `reference/rigging.md` | Where to run cut lines, where pivots go, what to do when it looks wrong. |
-| `reference/animating.md` | The idle loop, driving it from real loading, the handover, and the lens-dive transition. |
-
-## ⚡ Try it
-
-```bash
-python3 -m venv .venv && .venv/bin/pip install vtracer pillow
-
-.venv/bin/python scripts/grid.py character.png -o grid.png     # measure
-$EDITOR rig.json                                                # describe the pieces
-.venv/bin/python scripts/rig.py character.png rig.json -o rigged.svg
-.venv/bin/python scripts/preview.py rigged.svg rig.json -o preview.html
-```
-
-Then paste `rigged.svg` inline into `assets/loader.html` and fill in the ids and pivots that
-`rig.py` printed. [`SKILL.md`](SKILL.md) walks the whole thing step by step.
-
-The PNG needs a transparent background — tracing a solid one makes a single giant shape that
-swallows the character.
-
-## 🪤 Things that will bite you
-
-- **Small angles.** Idle motion lives at 2–6°. Past that the cuts between pieces open up.
-- **Whole-figure motion goes on the root group.** A sibling does not inherit its sibling's
-  transform, so swaying the torso alone slides it out from under the head and arms — every seam
-  opens at once.
-- **A circular cut centred on the pivot is free.** It maps onto itself under rotation, so an arm
-  cut around its shoulder ball needs no seam patch at all.
-- **The SVG must be inline in the DOM.** `<img src="rigged.svg">` renders it but hides its insides;
-  GSAP has nothing to grab.
-- **The file is big** — about 1 MB of path data for a detailed character, ~350 KB gzipped. Serve it
-  compressed and drop it from the DOM once the loader is gone.
-
-`reference/rigging.md` has the full table of *what you see* → *what it is*.
+| `scripts/` | `grid.py` to measure, `rig.py` to cut and trace, `preview.py` to check, `trace.py` underneath |
+| `assets/loader.html` | A working loading screen: idle loop, real-progress API, reveal |
+| `reference/rigging.md` | Where cut lines go, where pivots go, and what each way it can look wrong means |
+| `reference/animating.md` | The idle loop, driving it from real progress, the handover, the lens-dive transition |
+| [`SKILL.md`](SKILL.md) | The pipeline as plain documentation — every command, if you would rather drive it yourself |
 
 ---
