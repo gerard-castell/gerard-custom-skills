@@ -1,6 +1,6 @@
 <div align="center">
 
-# gerard-custom-skills
+# My Custom Skills
 
 **A grab bag of skills I pulled out of other projects.**
 Not a framework. Not a methodology. Just things that turned out to be useful twice.
