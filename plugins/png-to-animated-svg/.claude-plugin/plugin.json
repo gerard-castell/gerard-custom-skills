@@ -1,0 +1,8 @@
+{
+  "name": "png-to-animated-svg",
+  "description": "Turn a flat PNG (a character, mascot, logo, illustration) into a rigged SVG whose pieces move independently, and into a real web animation such as a loading screen or an intro.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Gerard Castell"
+  }
+}

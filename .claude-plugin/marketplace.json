@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "gerard-custom-skills",
+  "description": "Skills for Claude Code by Gerard Castell",
+  "owner": {
+    "name": "Gerard Castell"
+  },
+  "plugins": [
+    {
+      "name": "png-to-animated-svg",
+      "description": "Turn a flat PNG into a rigged SVG whose pieces move independently, and into a real web animation such as a loading screen or an intro.",
+      "author": {
+        "name": "Gerard Castell"
+      },
+      "source": "./plugins/png-to-animated-svg",
+      "category": "design"
+    }
+  ]
+}

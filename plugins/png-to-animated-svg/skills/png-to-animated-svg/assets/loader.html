@@ -1,0 +1,172 @@
+<!doctype html>
+<!--
+  Loading screen driven by a rigged SVG (see the png-to-animated-svg skill).
+
+  To use it:
+    1. paste the contents of rigged.svg where it says PASTE RIGGED SVG,
+       and give the <svg> element id="rig" (the SVG must be inline: GSAP needs the nodes,
+       and <img src="rigged.svg"> hides them),
+    2. fill in RIG below with the ids and pivots rig.py printed,
+    3. call Loader.progress(0..1) as your real work lands, and Loader.done() when it is finished.
+
+  With SIMULATED = true it fakes a load so you can watch it; any key or click skips.
+-->
+<meta charset="utf-8" />
+<title>loading</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #120d0a; font: 16px system-ui, sans-serif; }
+
+  #loader {
+    position: fixed; inset: 0; z-index: 10; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3vh; padding: 16px; user-select: none;
+    /* the spotlight the character stands in */
+    background:
+      radial-gradient(ellipse 34% 46% at 50% 44%, rgba(246, 190, 110, .2), transparent 70%),
+      radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, rgba(0, 0, 0, .65)), #120d0a;
+  }
+  #rig { width: min(70vw, 60vh); height: auto; display: block; overflow: visible; }
+
+  /* progress bar */
+  #bar { width: min(320px, 70vw); height: 4px; border-radius: 2px; background: rgba(239, 227, 200, .18); }
+  #bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: #efe3c8; }
+
+  /* the page underneath, revealed when loading finishes */
+  #page { padding: 10vh 6vw; color: #efe3c8; }
+  body.loading #page { visibility: hidden; }
+  body:not(.loading) #loader { display: none; }
+  @media (prefers-reduced-motion: reduce) { #rig { animation: none; } }
+</style>
+
+<body class="loading">
+  <div id="loader">
+    <!-- PASTE RIGGED SVG HERE (and put id="rig" on the <svg>) -->
+
+    <div id="bar"><i></i></div>
+  </div>
+
+  <main id="page">
+    <h1>The page</h1>
+    <p>Replace this with the real thing.</p>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    // ---- the rig: ids and pivots as rig.py printed them --------------------------------------
+    const RIG = {
+      // whole body rocking side to side
+      sway: { id: "detective", pivot: "200 517", degrees: 2.5, shift: 6, duration: 0.9 },
+      // chest rising: a piece that stretches a little on the spot
+      breathe: { id: "coat-group", pivot: "200 517", duration: 1 },
+      // anything that swings: arms, a held object, a tail
+      limbs: [
+        { id: "arm-glass-group", pivot: "285 355", from: 2, to: -5, duration: 1.1 },
+        { id: "magnifying-glass", pivot: "130 265", from: 4, to: -7, duration: 0.8 },
+        { id: "head-group", pivot: "300 248", from: 0, to: -3, duration: 1.1 },
+      ],
+      // eyes close by squashing to nothing and opening again
+      blink: { id: "eyes", pivot: "300 118", every: 2.4 },
+    };
+
+    const SIMULATED = true;
+    const MIN_SHOW = 1.2; // seconds the loader stays up even if the real work is instant
+
+    const loader = document.getElementById("loader");
+    const fill = document.querySelector("#bar i");
+    const svg = document.getElementById("rig");
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const find = (id) => (id && svg ? svg.querySelector("#" + id) : null);
+    const startedAt = performance.now();
+
+    // ---- the idle loop ------------------------------------------------------------------------
+    // Every piece moves on its own clock: nothing lines up, so a 4-second loop never looks like
+    // a loop. Keep the angles small - a few degrees each - or the cuts between pieces show.
+    const idle = gsap.timeline();
+
+    if (!reduced && svg) {
+      const { sway, breathe, limbs, blink } = RIG;
+
+      const body = find(sway?.id);
+      if (body) {
+        const d = sway.degrees, x = sway.shift, o = { svgOrigin: sway.pivot, duration: sway.duration, ease: "sine.inOut" };
+        idle.add(gsap.timeline({ repeat: -1 })
+          .to(body, { rotation: -d, x: -x, ...o })
+          .to(body, { rotation: d, x: x, ...o })
+          .to(body, { rotation: 0, x: 0, ...o }), 0);
+      }
+
+      const chest = find(breathe?.id);
+      if (chest) {
+        idle.add(gsap.to(chest, {
+          scaleY: 1.01, svgOrigin: breathe.pivot, duration: breathe.duration,
+          ease: "sine.inOut", yoyo: true, repeat: -1,
+        }), 0);
+      }
+
+      for (const limb of limbs ?? []) {
+        const el = find(limb.id);
+        if (!el) continue;
+        idle.add(gsap.fromTo(el,
+          { rotation: limb.from, svgOrigin: limb.pivot },
+          { rotation: limb.to, svgOrigin: limb.pivot, duration: limb.duration, ease: "sine.inOut", yoyo: true, repeat: -1 },
+        ), 0);
+      }
+
+      const eyes = find(blink?.id);
+      if (eyes) {
+        // close and open inside one cycle: with yoyo + repeatDelay the eyes stay shut in the pause
+        idle.add(gsap.timeline({ repeat: -1, repeatDelay: blink.every, defaults: { svgOrigin: blink.pivot } })
+          .to(eyes, { scaleY: 0.1, duration: 0.08, ease: "power1.in" })
+          .to(eyes, { scaleY: 1, duration: 0.1, ease: "power1.out" }), 1.2);
+      }
+    }
+
+    // ---- progress -----------------------------------------------------------------------------
+    let progress = 0;
+    let finishing = false;
+
+    function setProgress(p) {
+      progress = Math.max(progress, Math.min(1, p)); // never goes backwards
+      gsap.to(fill, { width: progress * 100 + "%", duration: 0.3, ease: "power2.out" });
+    }
+
+    function done() {
+      if (finishing) return;
+      finishing = true;
+      setProgress(1);
+      const wait = Math.max(0, MIN_SHOW - (performance.now() - startedAt) / 1000);
+      gsap.delayedCall(wait, reveal);
+    }
+
+    function reveal() {
+      document.body.classList.remove("loading");
+      gsap.from("#page", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" });
+      gsap.to(loader, {
+        opacity: 0, duration: 0.5, onComplete: () => {
+          idle.kill();
+          loader.remove(); // the rigged SVG is heavy; drop it once it is off screen
+        },
+      });
+    }
+
+    window.Loader = { progress: setProgress, done };
+
+    // ---- fake load, so the page does something on its own ---------------------------------------
+    if (SIMULATED) {
+      const state = { p: 0 };
+      const fake = gsap.timeline({ onComplete: done });
+      // stutters forward, the way a real load does
+      [0.14, 0.3, 0.37, 0.55, 0.62, 0.8, 0.93, 1].forEach((p, i) => {
+        fake.to(state, {
+          p, duration: gsap.utils.random(0.35, 0.75), ease: "power1.inOut",
+          onUpdate: () => setProgress(state.p),
+        }, i ? ">+=" + gsap.utils.random(0.05, 0.3) : 0.3);
+      });
+      const skip = () => { if (!finishing) fake.progress(1); };
+      addEventListener("keydown", skip);
+      loader.addEventListener("pointerdown", skip);
+    }
+  </script>
+</body>

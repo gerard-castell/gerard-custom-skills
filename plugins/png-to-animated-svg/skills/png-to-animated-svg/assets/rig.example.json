@@ -1,0 +1,26 @@
+{
+  "//": "Worked example: a detective holding a magnifier, 409x517 after cropping.",
+  "//body": "The coat is the rest. The head is cut at the collar, the arm as a polygon down to the shoulder.",
+  "root": "detective",
+  "parts": [
+    { "id": "coat-group", "rest": true, "pivot": [200, 517] },
+    {
+      "id": "head-group",
+      "region": [148, 0, 200, 235],
+      "pivot": [300, 248],
+      "joint": [230, 215, 130, 30],
+      "children": [
+        { "id": "eyes", "region": [248, 90, 105, 58], "pivot": [300, 118], "under": "#f0d3b4" }
+      ]
+    },
+    {
+      "id": "arm-glass-group",
+      "region": [[0, 80], [185, 80], [185, 240], [230, 270], [300, 340], [300, 395], [190, 395], [120, 330], [80, 300], [0, 300]],
+      "pivot": [285, 355],
+      "joint": [240, 300, 70, 80],
+      "children": [
+        { "id": "magnifying-glass", "region": [0, 80, 135, 190], "pivot": [130, 265] }
+      ]
+    }
+  ]
+}
