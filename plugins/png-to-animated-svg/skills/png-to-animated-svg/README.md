@@ -82,7 +82,3 @@ swallows the character.
 `reference/rigging.md` has the full table of *what you see* → *what it is*.
 
 ---
-
-Built by reverse-engineering a hand-made Sherlock Holmes loading screen, then validated twice: by
-regenerating that same character from its PNG with nothing but the shipped example rig, and by
-rigging the robot at the top of this page from scratch.
