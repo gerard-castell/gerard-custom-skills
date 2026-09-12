@@ -16,7 +16,7 @@ own transform.
 ## The pipeline
 
 ```
-character.png  --grid.py-->   grid.png     you (or the user) read the pieces off the image
+character.png  --grid.py-->   grid.png     read the pieces off a labelled coordinate grid
                --rig.py-->    rigged.svg   each piece traced from its own cut-out, named group
                --preview.py--> preview.html check the pieces and the pivots in a browser
                + GSAP          the animation (assets/loader.html is a working starting point)
@@ -34,19 +34,19 @@ that swallows the character.
 
 ### 1. See the image, and measure it
 
-**Look at the PNG yourself** (read the image file) before anything else. You are deciding what
-moves; that is an artistic call, not a mechanical one. Then:
+**Look at the PNG itself** before anything else - deciding what moves is an artistic call, not a
+mechanical one. Then:
 
 ```bash
 .venv/bin/python scripts/grid.py character.png -o grid.png
 ```
 
-Read `grid.png` (it is the image with labelled coordinates, cropped exactly the way the tracer
+Open `grid.png` (it is the image with labelled coordinates, cropped exactly the way the tracer
 will crop it) and write down a box for each piece that should move.
 
-Decide with the user, or propose: what moves, and what kind of motion? A loading loop usually
-wants 3-5 pieces. More pieces means more seams to hide, not more life - a body that sways, an
-arm that swings, a head that tilts and blinks already reads as alive.
+Decide what moves, and what kind of motion. A loading loop usually wants 3-5 pieces. More pieces
+means more seams to hide, not more life - a body that sways, an arm that swings, a head that tilts
+and blinks already reads as alive.
 
 ### 2. Describe the rig
 
@@ -121,3 +121,20 @@ lens-dive transition, reduced motion, and how to wire this into React or another
   simpler shapes with the same silhouette) and run it through SVGO.
 - **`vtracer`'s Python binding segfaults on keyword arguments** on some builds. `trace.py` calls it
   positionally; keep it that way.
+
+## For agent runtimes
+
+Everything above is plain CLI usage - no agent needed. An agent running this skill for someone
+adds a few things on top:
+
+- **Look at the PNG directly** (as an image, not just a file path) before proposing a rig - what
+  moves is a judgment call the agent should make visually, the same way a person would.
+- **Propose the piece list and rig to the user before building**, rather than guessing silently;
+  rigging is iterative (step 3 expects two or three rounds), so surface each round's preview
+  rather than looping on your own.
+- Treat `reference/rigging.md` and `reference/animating.md` as material to consult mid-task, not
+  to read once - they answer "why does this look wrong" questions that come up during steps 2-4.
+
+This skill ships as a Claude Code plugin (see the root README), where the frontmatter above is how
+Claude Code discovers and describes it. Other agent runtimes can ignore the frontmatter and start
+reading at the heading below it.
