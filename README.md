@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="assets/hero-png-to-animated-svg.gif" alt="A cartoon robot waving, blinking and breathing — a flat PNG rigged into an animated SVG by the png-to-animated-svg skill" width="400">
-
 # gerard-custom-skills
 
 **A grab bag of skills I pulled out of other projects.**
@@ -13,9 +11,6 @@ Not a framework. Not a methodology. Just things that turned out to be useful twi
 [![Agent: optional](https://img.shields.io/badge/agent-optional-7fb069?style=flat-square)](#-use-it)
 
 </div>
-
-> That robot up there started life as one flat PNG. The skill cut it into pieces, traced each one,
-> and handed back an SVG that waves. That is roughly the energy of this whole repo.
 
 ## 🤷 What this is
 
@@ -38,7 +33,7 @@ Take the ones you like. Ignore the rest.
 
 | | Skill | What it does |
 |---|---|---|
-| <img src="assets/thumb-png-to-animated-svg.png" width="110"> | **[png-to-animated-svg](plugins/png-to-animated-svg/skills/png-to-animated-svg/)** | Cuts a flat PNG character into named pieces, vectorizes each one, and rigs it so a head tilts, eyes blink and an arm waves. Comes with a working loading screen. |
+| <img src="assets/thumb-png-to-animated-svg.gif" width="150" alt="A cartoon robot waving, blinking and breathing"> | **[png-to-animated-svg](plugins/png-to-animated-svg/skills/png-to-animated-svg/)** | Cuts a flat PNG character into named pieces, vectorizes each one, and rigs it so the head tilts, the eyes blink and an arm waves. That robot was one still image until this ran over it. Comes with a working loading screen. |
 
 ## 🚀 Use it
 
