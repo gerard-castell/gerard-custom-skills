@@ -33,12 +33,12 @@ Take the ones you like. Ignore the rest.
 
 | | Skill | What it does |
 |---|---|---|
-| <img src="assets/thumb-png-to-animated-svg.gif" width="150" alt="A cartoon robot waving, blinking and breathing"> | **[png-to-animated-svg](plugins/png-to-animated-svg/skills/png-to-animated-svg/)** | Cuts a flat PNG character into named pieces, vectorizes each one, and rigs it so the head tilts, the eyes blink and an arm waves. That robot was one still image until this ran over it. Comes with a working loading screen. |
+| <img src="assets/thumb-png-to-animated-svg.gif" width="150" alt="A cartoon robot waving, blinking and breathing"> | **[png-to-animated-svg](plugins/png-to-animated-svg/skills/png-to-animated-svg/README.md)** | Cuts a flat PNG character into named pieces, vectorizes each one, and rigs it so the head tilts, the eyes blink and an arm waves. That robot was one still image until this ran over it. Comes with a working loading screen. |
 
 ## 🚀 Use it
 
 The fastest way in is to hand a skill to an agent and describe what you want. It reads the
-`SKILL.md`, runs the scripts, looks at what came out and goes round again — which is most of the
+`SKILL.md`, runs the scripts, looks at what came out and goes round again, which is most of the
 work, since rigging a character is two or three rounds of *"that shoulder pivot is wrong, move it
 left"*.
 
@@ -54,7 +54,7 @@ Then just ask for the thing: *"turn this PNG into a loading screen"*.
 **With any other agent**
 
 Clone the repo and point the agent at the skill's folder and its `SKILL.md`. That is the whole
-entry point — no runtime, no adapter. Some agents have their own convention for picking this up
+entry point, no runtime, no adapter. Some agents have their own convention for picking this up
 (an `AGENTS.md`, for example); see [AGENTS.md](AGENTS.md).
 
 ```bash
@@ -64,7 +64,7 @@ git clone https://github.com/gerard-castell/gerard-custom-skills.git
 <details>
 <summary>Or run it yourself, no agent involved</summary>
 
-A skill is a folder of scripts and docs, and its `SKILL.md` reads as plain documentation — the
+A skill is a folder of scripts and docs, and its `SKILL.md` reads as plain documentation: the
 pipeline, the setup, the commands, with any agent-specific wiring in its own section at the
 bottom. Copy the folder, install its dependencies, run its scripts:
 
@@ -100,4 +100,4 @@ cp -r gerard-custom-skills/plugins/png-to-animated-svg/skills/png-to-animated-sv
 
 ## 📄 Licence
 
-MIT — see [LICENSE](LICENSE). Take it, break it, ship it.
+MIT, see [LICENSE](LICENSE). Take it, break it, ship it.
